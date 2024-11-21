@@ -484,8 +484,9 @@ function checkScore() {
   scoreArea.drawRect(scoreAreaXStart, scoreAreaY, scoreAreaWidth, 75);
   scoreArea.endFill();
 
-  game.time.events.add(Phaser.Timer.SECOND * 0.5, () => {
-    scoreArea.destroy();
+  // Criando um evento temporizado que destruirá o "scoreArea" após meio segundo
+  const scoreAreaTimer = game.time.events.add(Phaser.Timer.SECOND * 0.5, () => {
+    scoreArea.destroy(); // Destrói o gráfico após 0.5s
   });
 
   if (ball.body.y >= scoreAreaY && !ball.isBelowHoop) {
@@ -494,6 +495,9 @@ function checkScore() {
     let scored = ball.body.x > scoreAreaXStart && ball.body.x < scoreAreaXEnd;
     updateScore(scored);
     displayEmoji(scored ? "win" : "lose");
+    
+    // Cancelar o evento temporizado se não for necessário mais
+    game.time.events.remove(scoreAreaTimer);
   }
 }
 
@@ -563,6 +567,19 @@ function fadeOutEmoji() {
     .tween(emoji)
     .to({ y: 50, alpha: 0 }, 600, Phaser.Easing.Elastic.In, true)
     .onComplete.add(() => emoji.kill(), this);
+}
+
+function removeCollisionsFromObject(object) {
+  // Remove a colisão do objeto com o grupo de colisões
+  object.body.setCollisionGroup(null);  // Remove a colisão com o grupo
+  object.body.collides([]);  // Remove todos os objetos com os quais ele colide
+}
+
+function destroyObjectAndCollisions(object) {
+  if (object) {
+    removeCollisionsFromObject(object);  // Remove colisões
+    object.destroy();  // Destrói o objeto
+  }
 }
 
 function resetBallIfOutOfBounds() {
@@ -661,6 +678,11 @@ function setupInput() {
   }
 }
 
+function cleanupInput() {
+  game.input.onDown.remove(onPointerDown, this);
+  game.input.onUp.remove(onPointerUp, this);
+}
+
 function restartGame() {
   lives = 2;
   currentScore = 0; // Zera o score
@@ -671,6 +693,9 @@ function restartGame() {
     tween.stop(); // Para o tween ativo
     tween = null; // Limpa a referência ao tween
   }
+
+  cleanupInput();
+
   updateLivesText();
   updateScoreText();
 }
