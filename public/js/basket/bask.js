@@ -384,7 +384,7 @@ function createBall() {
   if (ball) {
     ball.kill(); // Garante que a bola anterior seja destruída
   }
-  
+
   const randomPosition =
     spawnPositions[Math.floor(Math.random() * spawnPositions.length)];
 
@@ -434,11 +434,6 @@ function setupInput() {
   game.input.onUp.add(onPointerUp, this);
 }
 
-function displayInstructions() {
-  let instructions = document.createElement("span");
-  instructions.innerHTML = "";
-  document.body.appendChild(instructions);
-}
 
 function update() {
   if (ball && ball.body.velocity.y > 0) {
@@ -571,7 +566,7 @@ function fadeOutEmoji() {
 }
 
 function resetBallIfOutOfBounds() {
-  if (ball && ball.body.y > 8550) {
+  if (ball && ball.body.y > 6550) {
     game.physics.p2.gravity.y = 0;
     ball.kill();
     createBall();
