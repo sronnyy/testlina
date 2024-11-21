@@ -380,6 +380,11 @@ function createRim(x, y) {
 }
 
 function createBall() {
+
+  if (ball) {
+    ball.kill(); // Garante que a bola anterior seja destruída
+  }
+  
   const randomPosition =
     spawnPositions[Math.floor(Math.random() * spawnPositions.length)];
 
